@@ -2,6 +2,7 @@ package com.megait.mymall.service;
 
 import com.megait.mymall.domain.Address;
 import com.megait.mymall.domain.Member;
+import com.megait.mymall.domain.MemberType;
 import com.megait.mymall.validation.SignUpFormValidator;
 import com.megait.mymall.validation.SignUpForm;
 import com.megait.mymall.repository.MemberRepository;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
 import javax.validation.Validator;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 public class MemberService {
@@ -39,7 +42,10 @@ public class MemberService {
         Member member = Member.builder()
                 .email(signupForm.getEmail())
                 .password(signupForm.getPassword())
-                .address(Address.builder().city(signupForm.getCity()).street(signupForm.getStreet()).zip(signupForm.getZipcode()).build())
+                .address(Address.builder().city(signupForm.getCity()).
+                        street(signupForm.getStreet()).zip(signupForm.getZipcode()).build())
+                .type(MemberType.ROLE_USER)
+                .joinedAt(LocalDateTime.now())
                 .build();
         memberRepository.save(member);
 

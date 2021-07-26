@@ -27,6 +27,6 @@ public class SignUpForm {
     private String street;
     private String city;
 
-    @Pattern(regexp = "^[0-9].{5}$")  // TODO 정규식 맞는 지 확인할 것
+    @Pattern(regexp = "^[0-9]{5}$")  // TODO 정규식 맞는 지 확인할 것
     private String zipcode;
 }
