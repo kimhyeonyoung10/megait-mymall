@@ -5,6 +5,7 @@ import com.megait.mymall.repository.MemberRepository;
 import com.megait.mymall.validation.SignUpForm;
 import com.megait.mymall.service.MemberService;
 import com.megait.mymall.validation.SignUpFormValidator;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,19 +18,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @Slf4j // log 변수
+@RequiredArgsConstructor
 public class MainController {
 
-    @Autowired
-    MemberService memberService;
-
-    @Autowired
-    MemberRepository memberRepository;
+   private final MemberService memberService;
+   private final MemberRepository memberRepository;
 
     @InitBinder("signupForm")
-    protected void initinder(WebDataBinder binder){ binder.setValidator(new SignUpFormValidator(memberRepository));}
+    protected void initinder(WebDataBinder binder){ binder.addValidators(new SignUpFormValidator(memberRepository));}
 
     @RequestMapping("/")
     public String index(){
@@ -45,7 +45,7 @@ public class MainController {
     @PostMapping("/signup")
     public String signUpSubmit(@Valid SignUpForm signupForm, Errors errors){
         if(errors.hasErrors()){
-            log.info("유효하지 않은 회원 정보. 가입 불가");
+            log.error("errors : {}",errors.getAllErrors());
             return "member/signup"; // "redirect:/signup"
         }
         log.info("올바른 회원 정보.");
@@ -56,5 +56,22 @@ public class MainController {
         memberService.login(member);
 
         return "redirect:/"; // "/"로 리다이렉트
+    }
+
+    @GetMapping("/email-check-token")
+    public String emailCheckToken(String token, String email){
+        Optional<Member> optional = memberRepository.findByEmail(email);
+        if(optional.isEmpty()){
+            log.info("Email does not exist.");
+            return "redirect:/";
+        }
+        Member member = optional.get();
+        if(!token.equals(member.getEmailCheckToken())){
+            log.info("Token not matches.");
+            return "redirect:/";
+        }
+        log.info("Success!");
+        member.setEmailVerified(true);
+        return "redirect:/";
     }
 }

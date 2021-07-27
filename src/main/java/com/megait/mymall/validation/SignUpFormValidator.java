@@ -3,6 +3,7 @@ package com.megait.mymall.validation;
 import com.megait.mymall.domain.Member;
 import com.megait.mymall.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -12,6 +13,8 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
+
 public class SignUpFormValidator implements Validator {
 
     private final MemberRepository repository;

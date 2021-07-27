@@ -3,59 +3,64 @@ package com.megait.mymall.service;
 import com.megait.mymall.domain.Address;
 import com.megait.mymall.domain.Member;
 import com.megait.mymall.domain.MemberType;
-import com.megait.mymall.validation.SignUpFormValidator;
-import com.megait.mymall.validation.SignUpForm;
 import com.megait.mymall.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.megait.mymall.util.ConsoleMailSender;
+import com.megait.mymall.validation.SignUpForm;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Validator;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.UUID;
 
 @Service
+@Validated
+@RequiredArgsConstructor
+@Slf4j
 public class MemberService {
-    @Autowired
-    SignUpFormValidator signUpFormValidator;
 
-    @Autowired
-    LocalValidatorFactoryBean localValidatorFactoryBean;
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    Validator validator;
+    private final ConsoleMailSender consoleMailSender;
 
-    @Autowired
-    MemberRepository memberRepository;
-
-    @InitBinder
-    protected  void initBinder(WebDataBinder binder){
-        binder.setValidator(new SignUpFormValidator(memberRepository));
-    }
-
-    public Member processNewMember(SignUpForm signupForm) {
-        // 유효성 검사 시작. - initBinder()가 실행됨.
+    public Member processNewMember(SignUpForm signUpForm) {
 
         // 올바른 form인 경우 DB 저장
         Member member = Member.builder()
-                .email(signupForm.getEmail())
-                .password(signupForm.getPassword())
-                .address(Address.builder().city(signupForm.getCity()).
-                        street(signupForm.getStreet()).zip(signupForm.getZipcode()).build())
+                .email(signUpForm.getEmail())
+                .password(signUpForm.getPassword())
+                .address(Address.builder()
+                        .city(signUpForm.getCity())
+                        .street(signUpForm.getStreet())
+                        .zip(signUpForm.getZipcode())
+                        .build())
                 .type(MemberType.ROLE_USER)
                 .joinedAt(LocalDateTime.now())
+                .emailCheckToken(UUID.randomUUID().toString())
                 .build();
+        member.generateEmailCheckToken();
         memberRepository.save(member);
 
         // TODO 이메일에 인증 링크 전송
 
-        // 새로 추가된 회원(Member 엔티티)를 return
+        String url = "http://127.0.0.1:8080/email-check-token?token=" +
+                member.getEmailCheckToken() + "&email=" +member.getEmail();
+        log.info("url : {}",url);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(member.getEmail());
+        message.setFrom("admin@mymall.com");
+        message.setSubject("[mymall] 회원가입 이메일 인증 링크입니다.");
+        message.setText("다음 링크를 클릭해주세요. =>"+ url);
+        consoleMailSender.send(message);
+
+        // 새로 추가된 회원 (Member 엔티티)를 return
         return member;
     }
 
     public void login(Member member) {
-        // 해당 member를 authenticated 상태로 저장 -> 로그인 완료 처리
+        // 해당 member를 authenticated 상태로 저장 => 로그인 완료 처리
     }
 }

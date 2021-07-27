@@ -3,9 +3,11 @@ package com.megait.mymall.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter @Setter
@@ -38,6 +40,12 @@ public class Member {
 
     @Embedded
     private Address address;
+
+    @Transactional // JPARepository가 아닌 다른 메서드에서 DB 변경을 해야한다면
+                    // 그 메서드에 @Transactional 선언. (spting-data-jpa)
+    public void generateEmailCheckToken(){
+        emailCheckToken = UUID.randomUUID().toString();
+    }
 
 
 }
