@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.Optional;
 
@@ -32,8 +33,16 @@ public class MainController {
     protected void initinder(WebDataBinder binder){ binder.addValidators(new SignUpFormValidator(memberRepository));}
 
     @RequestMapping("/")
-    public String index(){
+    public String index(@AuthenticationMember Member member, Model model){
+        if(member != null){
+            model.addAttribute(member);
+        }
         return "index";
+    }
+
+    @GetMapping("/login")
+    public String login(){
+        return "member/login";
     }
 
     @GetMapping("/signup")
@@ -59,19 +68,22 @@ public class MainController {
     }
 
     @GetMapping("/email-check-token")
-    public String emailCheckToken(String token, String email){
+    @Transactional
+    public String emailCheckToken(String token, String email, Model model) {
         Optional<Member> optional = memberRepository.findByEmail(email);
-        if(optional.isEmpty()){
-            log.info("Email does not exist.");
-            return "redirect:/";
+        if (optional.isEmpty()) {
+            model.addAttribute("error", "wrong.email");
+            return "member/checked-email";
         }
+
         Member member = optional.get();
-        if(!token.equals(member.getEmailCheckToken())){
-            log.info("Token not matches.");
-            return "redirect:/";
+        if (!member.isValidToken(token)) {
+            model.addAttribute("error", "wrong.token");
+            return "member/checked-email";
         }
-        log.info("Success!");
-        member.setEmailVerified(true);
-        return "redirect:/";
+
+        model.addAttribute("email", member.getEmail());
+        member.completeSignUp();
+        return "member/checked-email";
     }
 }

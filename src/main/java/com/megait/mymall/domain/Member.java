@@ -41,11 +41,18 @@ public class Member {
     @Embedded
     private Address address;
 
-    @Transactional // JPARepository가 아닌 다른 메서드에서 DB 변경을 해야한다면
-                    // 그 메서드에 @Transactional 선언. (spting-data-jpa)
+    // JPARepository가 아닌 다른 메서드에서 DB 변경을 해야한다면
+    // 그 메서드에 @Transactional 선언. (spting-data-jpa)
     public void generateEmailCheckToken(){
         emailCheckToken = UUID.randomUUID().toString();
     }
 
+    public boolean isValidToken(String token) {
+        return emailCheckToken.equals(token);
+    }
+
+    public void completeSignUp(){
+        emailVerified = true;
+    }
 
 }

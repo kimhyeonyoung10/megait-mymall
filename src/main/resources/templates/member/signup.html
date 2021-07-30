@@ -2,18 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="layout/common_layout">
+      layout:decorate="~{layout/common_layout}"  th:with="activeTab='signup', title='Sign Up'">
 
-<th:block layout:fragment="script">
+<head>
     <script th:src="@{/js/member/form-validation.js}"></script>
     <script th:src="@{/js/member/daum-address.js}"></script>
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-</th:block>
-
-
-<th:block layout:fragment="css">
     <link th:href="@{/css/member/signup.css}" rel="stylesheet">
-</th:block>
+</head>
+
+<body>
 
 <div layout:fragment="content">
     <div class="container">
@@ -77,15 +75,23 @@
                         <div class="col-4">
                             <label for="street" class="form-label">상세주소</label>
                             <div class="input-group">
-                                <input type="text" th:field="*{street}" class="form-control" th:classappend="${#fields.hasErrors('validAddress') } ? 'is-invalid'"id="street">
-                                <div th:if="${#fields.hasErrors('validAddress')}" th:class="${#fields.hasErrors('validAddress')}? 'invalid-feedback'" th:each="err : ${#fields.errors('validAddress')}" th:text="${err}">
+                                <input type="text"
+                                       th:field="*{street}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('validAddress') } ? 'is-invalid'"
+                                       id="street">
+                                <div th:if="${#fields.hasErrors('validAddress')}"
+                                     th:class="${#fields.hasErrors('validAddress')}? 'invalid-feedback'"
+                                     th:each="err : ${#fields.errors('validAddress')}"
+                                     th:text="${err}">
                                     주소를 정확히 기입해주세요.</div>
                             </div>
 
                         </div>
                         <div class="col-2">
                             <label class="form-label">기본주소</label>
-                            <button class="w-100 btn btn-dark" type="button" onclick="search(signupForm)">주소 검색</button>
+                            <button class="w-100 btn btn-dark" type="button"
+                                    onclick="search(signupForm)">주소 검색</button>
                         </div>
 
                         <hr class="col-12 my-4">
@@ -99,4 +105,5 @@
         </footer>
     </div>
 </div>
+</body>
 </html>
