@@ -86,4 +86,9 @@ public class MainController {
         member.completeSignUp();
         return "member/checked-email";
     }
+    @GetMapping("/test")
+    public String test(Model model){
+        model.addAttribute("name","김피카츄");
+        return "test";
+    }
 }
