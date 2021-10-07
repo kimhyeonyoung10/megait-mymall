@@ -35,10 +35,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/", "/login", "/signup", "/check-email", "/email-check-token", "/test").permitAll()
 
                 // '/item' 으로 시작하는 자원은 get 요청만 가능
-                .antMatchers(HttpMethod.GET, "/item/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/item/**").permitAll()
 
                 // 다음 디렉토리 혹은 파일은 인증 없이 요청 가능
-                // .antMatchers("/css/**", "/images/**", "/js/**", "**/favicon.ico").permitAll()
+                 .antMatchers("/css/**", "/images/**", "/js/**", "**/;/favicon.ico").permitAll()
                 // 이것보다는 밑에 ignoring()이 좋다.
 
                 // 나머지 요청은 로그인 해야만 요청 가능

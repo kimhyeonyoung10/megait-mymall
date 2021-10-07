@@ -1,12 +1,14 @@
 package com.megait.mymall.service;
 
 import com.megait.mymall.domain.Address;
+import com.megait.mymall.domain.Item;
 import com.megait.mymall.domain.Member;
 import com.megait.mymall.domain.MemberType;
 import com.megait.mymall.repository.MemberRepository;
 import com.megait.mymall.validation.SignUpForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -38,15 +41,21 @@ public class MemberService implements UserDetailsService {
     public Member processNewMember(SignUpForm signUpForm) {
 
         // 올바른 form인 경우 DB 저장
+//        Member member = Member.builder()
+//                .email(signUpForm.getEmail())
+//                .password(passwordEncoder.encode(signUpForm.getPassword()))
+//                .address(Address.builder()
+//                        .city(signUpForm.getCity())
+//                        .street(signUpForm.getStreet())
+//                        .zip(signUpForm.getZipcode())
+//                        .build())
+//                .type(MemberType.ROLE_USER)
+//                .joinedAt(LocalDateTime.now())
+//                .build();
         Member member = Member.builder()
                 .email(signUpForm.getEmail())
-                .password(passwordEncoder.encode(signUpForm.getPassword()))
-                .address(Address.builder()
-                        .city(signUpForm.getCity())
-                        .street(signUpForm.getStreet())
-                        .zip(signUpForm.getZipcode())
-                        .build())
-                .type(MemberType.ROLE_USER)
+                .password(passwordEncoder.encode(passwordEncoder.encode(signUpForm.getPassword())))
+                .type(MemberType.ROLE_ADMIN)
                 .joinedAt(LocalDateTime.now())
                 .build();
 
@@ -104,4 +113,24 @@ public class MemberService implements UserDetailsService {
 //        return user;
     }
 
+    public List<Item> getLikeList(Member member) {
+        return memberRepository.findById(member.getId())
+                .orElseThrow(()->new UsernameNotFoundException("Wrong Member"))
+                .getLikes();
+    }
+
+    @PostConstruct
+    @Profile("local")
+    public void createNewMember(){
+
+        Member member = Member.builder()
+                .email("admin@test.com")
+                .password(passwordEncoder.encode("P@ssw0rd"))
+                .type(MemberType.ROLE_ADMIN)
+                .joinedAt(LocalDateTime.now())
+                .build();
+
+        Member newMember = memberRepository.save(member);
+        emailService.sendEmail(newMember);
+    }
 }

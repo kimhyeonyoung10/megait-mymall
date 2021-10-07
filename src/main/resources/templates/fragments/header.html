@@ -19,35 +19,34 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item" th:classappend="${activeTab == 'login'} ? active" sec:authorize="!isAuthenticated()"><!-- TODO 5.3 active 클래스 추가, authorize 속성 추가 -->
-          <a class="nav-link" th:href="@{/login}">로그인</a> <!-- TODO 5.4 로그인 링크 추가-->
+        <li class="nav-item" th:classappend="${activeTab == 'login'} ? active" sec:authorize="!isAuthenticated()">
+          <a class="nav-link" th:href="@{/login}">로그인</a>
         </li>
-        <li class="nav-item"><a class="nav-link" th:href="@{/signup}" th:classappend="${activeTab == 'signup'} ? active">회원가입</a></li> <!-- TODO 5.5 회원가입 링크 추가 -->
+        <li class="nav-item"><a class="nav-link" th:href="@{/signup}" th:classappend="${activeTab == 'signup'} ? active" sec:authorize="!isAuthenticated()">회원가입</a></li>
 
         <li class="nav-item" th:classappend="${activeTab == 'logout'} ? active">
-          <form class="form-inline" th:action="@{/logout}" th:method="post"> <!--눈에 보이지 않는 폼-->
+          <form class="form-inline" th:action="@{/logout}" th:method="post">
             <button class="nav-link btn btn-dark" type="submit" sec:authorize="isAuthenticated()">로그아웃</button>
           </form>
         </li>
-        <!-- TODO 5.7 내 정보 페이지 링크를 다음으로 변경 -->
+
         <li class="nav-item" th:classappend="${activeTab == 'mypage'} ? active"
             sec:authorize="isAuthenticated()">
           <a class="nav-link" th:href="@{'/mypage/' + ${#authentication?.name}}" sec:authentication="name">내 정보</a>
         </li>
 
-        <!-- TODO 5.8  -->
+
         <li class="nav-item" th:classappend="${activeTab == 'items'} ? active">
-          <a class="nav-link" th:href="@{/}">상품목록</a>
+          <a class="nav-link" th:href="@{/item}">상품목록</a>
         </li>
 
-        <!-- TODO 5.9  -->
-        <li class="nav-item" th:classappend="${activeTab == 'cart'}? active">
-          <a class="nav-link" th:href="@{/}">장바구니</a>
+
+        <li class="nav-item" th:classappend="${activeTab == 'cart'}? active" sec:authorize="isAuthenticated()">
+          <a class="nav-link" th:href="@{/cart/list}"><i class="fas fa-shopping-cart"></i></a>
         </li>
 
-        <!-- TODO 5.10  -->
         <li class="nav-item" th:classappend="${activeTab} == 'like'? active" sec:authorize="isAuthenticated()">
-          <a class="nav-link" th:href="@{/}"><i class="fas fa-heart"></i></a>
+          <a class="nav-link" th:href="@{/item/like-list}"><i class="fas fa-heart"></i></a>
         </li>
 
         <li class="nav-item dropdown">
@@ -69,7 +68,7 @@
       </form>
     </div>
   </nav>
-  <!-- TODO 5.11  -->
+
   <div class="alert alert-warning" role="alert" th:if="${member != null && !member.emailVerified}">
     가입을 완료하려면 <a href="#" th:href="@{/check-email}" class="alert-link">계정 인증 이메일을 확인</a>하세요.
   </div>

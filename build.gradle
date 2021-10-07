@@ -30,7 +30,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5' // 버전 명시 안하면 최신버전으로 쓸 수 있다! 그래서 버전 떼버림
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5' // 버전 명시 안하면 최신버전으로 쓸 수 있다! 그래서 버전 떼버림'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	compileOnly 'org.projectlombok:lombok'
@@ -48,6 +49,9 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
 	implementation group: 'org.hibernate', name: 'hibernate-validator', version: '7.0.1.Final'
+	implementation 'com.google.code.gson:gson'
+
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 test {

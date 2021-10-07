@@ -16,9 +16,7 @@ public class MemberUser extends User {
                 member.getEmail(),
                 member.getPassword(),
                 List.of(new SimpleGrantedAuthority(member.getType().name()))
-
         );
-
         this.member = member;
     }
 }

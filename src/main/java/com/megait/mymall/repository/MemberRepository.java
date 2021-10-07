@@ -3,6 +3,7 @@ package com.megait.mymall.repository;
 import com.megait.mymall.domain.Member;
 import com.megait.mymall.domain.MemberType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 

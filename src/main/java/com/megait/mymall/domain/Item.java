@@ -1,6 +1,7 @@
 package com.megait.mymall.domain;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,9 +10,9 @@ import java.util.List;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor @NoArgsConstructor
-public class Item {
+public abstract class Item { // 얘 객체자체를 쓰진 않겠다!
     @Id @GeneratedValue
     private Long id; // 상품 pk
 

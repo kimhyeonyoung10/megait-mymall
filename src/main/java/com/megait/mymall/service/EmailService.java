@@ -1,17 +1,20 @@
 package com.megait.mymall.service;
 
 import com.megait.mymall.domain.Member;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
-    @Autowired
-    MailSender consoleMailSender;
+
+    private final JavaMailSender javaMailSender;
 
     @Transactional
     public void sendEmail(Member member){
@@ -25,7 +28,7 @@ public class EmailService {
         message.setFrom("admin@mymall.com");
         message.setSubject("[mymall] 회원가입 이메일 인증 링크입니다.");
         message.setText("다음 링크를 클릭해주세요. =>"+url);
-        consoleMailSender.send(message);
+        javaMailSender.send(message);
     }
 }
 
